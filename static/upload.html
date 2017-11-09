@@ -1,0 +1,89 @@
+<script src ="/static/socket.io.js"></script>
+<script src ="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src ="/static/client.js"></script>
+<h3>file upload  </h3>
+
+<!-- <form id="_uploadForm" enctype="multipart/form-data">
+    <input type="file" name="file">
+</form> -->
+<input id="upload" type="button" value="上传">
+<input id="addUploadFile" type="button" value="添加文件">
+
+<script>
+
+(async ()=>{
+
+//上传进度回调函数：
+function progressHandlingFunction(e) {
+	if (e.lengthComputable) {
+		var percent = e.loaded/e.total*100;
+		console.log(percent);
+	}
+}
+/*$("#upload").click(function(){
+
+return;
+	$.ajax({
+			url:"/upload",
+			type: 'POST',
+			cache: false,
+			data: new FormData($('#infoLogoForm')[0]),
+			processData: false,
+			contentType: false,
+			dataType:"json",
+			beforeSend: function(){
+				//uploading = true;
+			},
+			success: function(data) {
+			console.log("上传成功");
+				console.log(data);
+			},
+			xhr: function(){
+				var myXhr = $.ajaxSettings.xhr();
+				if(myXhr.upload){ //检查upload属性是否存在
+				//绑定progress事件的回调函数
+				myXhr.upload.addEventListener('progress',progressHandlingFunction, false);
+				}
+				return myXhr; //xhr对象返回给jQuery使用
+				//console.log(xhr);
+			 }
+		});
+})*/
+
+
+//return;
+var client = new Client();
+await client.init();
+
+var uplodaFiles = [];
+$("#upload").click(async function(){
+	let res = await client.upload('/Home/Index/upload',{progress:(data)=>{
+		console.log("进度");
+		console.log(data);
+	},completeOne:(data)=>{
+		console.log("完成一个文件");
+		console.log(data);
+	}});
+	console.log("全部上传完成 ");
+	console.log(res);
+})
+
+$("#addUploadFile").click(async ()=>{
+
+	let file = await client.addUploadFile();
+	uplodaFiles.push(file);
+	//console.log(file);
+})
+client.onSocketMessage = (namespace,data)=>{
+	console.log("get msg ...");
+	console.log(namespace,data);
+}
+
+console.log("初始化完成...");
+let msg = await client.sendSocket("Home/Index/test","test");
+console.log(msg);
+
+})()
+
+
+</script>

@@ -1,0 +1,23 @@
+<script src ="/static/socket.io.js"></script>
+<script src ="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src ="/static/client.js"></script>
+<h3>socket client test </h3>
+<script>
+
+(async ()=>{
+var client = new Client();
+await client.init();
+
+client.onSocketMessage = (namespace,data)=>{
+	console.log("get msg ...");
+	console.log(namespace,data);
+}
+
+console.log("初始化完成...");
+let msg = await client.sendSocket("Home/Index/test","test");
+console.log(msg);
+
+})()
+
+
+</script>
